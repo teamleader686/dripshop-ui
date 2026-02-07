@@ -1,174 +1,118 @@
-import AppLayout from '@/components/layout/AppLayout';
-import { 
-  DollarSign, 
-  ShoppingBag, 
-  Users, 
+import AdminLayout from '@/components/admin/AdminLayout';
+import { useOrders } from '@/context/OrderContext';
+import {
+  DollarSign,
+  ShoppingBag,
+  Package,
+  RotateCcw,
   TrendingUp,
-  Eye
+  Truck,
 } from 'lucide-react';
-import { products } from '@/data/products';
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
+  const { orders, adminProducts } = useOrders();
+
+  const totalSales = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + o.totalAmount, 0);
+  const pendingShipments = orders.filter(o => ['placed', 'processing', 'packed'].includes(o.status)).length;
+  const returnsRequested = orders.filter(o => o.returnRequest).length;
+  const deliveredCount = orders.filter(o => o.status === 'delivered').length;
+
   const stats = [
-    { title: 'Total Sales', value: '$12,450', icon: DollarSign, change: '+12.5%' },
-    { title: 'Orders', value: '156', icon: ShoppingBag, change: '+8.2%' },
-    { title: 'Customers', value: '1,234', icon: Users, change: '+15.3%' },
-    { title: 'Conversion', value: '3.2%', icon: TrendingUp, change: '+2.1%' },
+    { title: 'Total Sales', value: `$${totalSales.toFixed(0)}`, icon: DollarSign, change: '+12.5%', color: 'text-success' },
+    { title: 'Total Orders', value: String(orders.length), icon: ShoppingBag, change: '+8.2%', color: 'text-primary' },
+    { title: 'Products', value: String(adminProducts.length), icon: Package, change: '', color: 'text-accent-foreground' },
+    { title: 'Pending Shipments', value: String(pendingShipments), icon: Truck, change: '', color: 'text-primary' },
+    { title: 'Returns', value: String(returnsRequested), icon: RotateCcw, change: '', color: 'text-destructive' },
+    { title: 'Delivered', value: String(deliveredCount), icon: TrendingUp, change: '', color: 'text-success' },
   ];
 
-  const recentOrders = [
-    { id: 'ORD-001', customer: 'John Doe', amount: 129.99, status: 'Delivered', date: '2025-02-05' },
-    { id: 'ORD-002', customer: 'Jane Smith', amount: 89.99, status: 'Shipped', date: '2025-02-04' },
-    { id: 'ORD-003', customer: 'Mike Johnson', amount: 249.99, status: 'Processing', date: '2025-02-04' },
-    { id: 'ORD-004', customer: 'Sarah Wilson', amount: 59.99, status: 'Pending', date: '2025-02-03' },
-    { id: 'ORD-005', customer: 'Tom Brown', amount: 179.99, status: 'Delivered', date: '2025-02-03' },
-  ];
+  const recentOrders = orders.slice(0, 5);
 
-  const campaigns = [
-    { name: 'Instagram Ads', reach: '45.2K', clicks: '2.3K', conversion: '4.2%', spend: '$450' },
-    { name: 'Facebook Ads', reach: '32.1K', clicks: '1.8K', conversion: '3.8%', spend: '$320' },
-    { name: 'Google Ads', reach: '28.5K', clicks: '1.5K', conversion: '3.5%', spend: '$280' },
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Delivered':
-        return 'bg-success/10 text-success';
-      case 'Shipped':
-        return 'bg-primary/10 text-primary';
-      case 'Processing':
-        return 'bg-accent text-accent-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
+  const statusColors: Record<string, string> = {
+    placed: 'bg-accent text-accent-foreground',
+    processing: 'bg-accent text-accent-foreground',
+    packed: 'bg-primary/10 text-primary',
+    shipped: 'bg-primary/10 text-primary',
+    out_for_delivery: 'bg-primary/10 text-primary',
+    delivered: 'bg-success/10 text-success',
+    cancelled: 'bg-destructive/10 text-destructive',
   };
 
   return (
-    <AppLayout>
-      <div className="container-main py-4 md:py-8">
-        <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-3xl font-bold mb-1 md:mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground text-xs md:text-base">Welcome back! Here's your store overview.</p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-8">
-          {stats.map((stat) => (
-            <div key={stat.title} className="bg-card rounded-xl border border-border p-3 md:p-6">
-              <div className="flex items-center justify-between mb-2 md:mb-4">
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-accent flex items-center justify-center">
-                  <stat.icon className="text-accent-foreground" size={16} />
-                </div>
-                <span className="text-[10px] md:text-xs font-medium text-success">{stat.change}</span>
+    <AdminLayout title="Dashboard">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-6">
+        {stats.map((stat) => (
+          <div key={stat.title} className="bg-card rounded-xl border border-border p-3 md:p-5">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
+                <stat.icon className={stat.color} size={18} />
               </div>
-              <p className="text-lg md:text-2xl font-bold">{stat.value}</p>
-              <p className="text-xs md:text-sm text-muted-foreground">{stat.title}</p>
+              {stat.change && (
+                <span className="text-[10px] md:text-xs font-medium text-success">{stat.change}</span>
+              )}
             </div>
-          ))}
+            <p className="text-lg md:text-2xl font-bold">{stat.value}</p>
+            <p className="text-xs text-muted-foreground">{stat.title}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <Link to="/admin/orders" className="bg-card rounded-xl border border-border p-4 text-center hover:shadow-soft transition-shadow">
+          <ShoppingBag size={24} className="mx-auto mb-2 text-primary" />
+          <p className="text-sm font-medium">Manage Orders</p>
+        </Link>
+        <Link to="/admin/products" className="bg-card rounded-xl border border-border p-4 text-center hover:shadow-soft transition-shadow">
+          <Package size={24} className="mx-auto mb-2 text-primary" />
+          <p className="text-sm font-medium">Manage Products</p>
+        </Link>
+        <Link to="/admin/shipping" className="bg-card rounded-xl border border-border p-4 text-center hover:shadow-soft transition-shadow">
+          <Truck size={24} className="mx-auto mb-2 text-primary" />
+          <p className="text-sm font-medium">Shipping</p>
+        </Link>
+        <Link to="/admin/returns" className="bg-card rounded-xl border border-border p-4 text-center hover:shadow-soft transition-shadow">
+          <RotateCcw size={24} className="mx-auto mb-2 text-primary" />
+          <p className="text-sm font-medium">Returns</p>
+        </Link>
+      </div>
+
+      {/* Recent Orders */}
+      <div className="bg-card rounded-xl border border-border p-4 md:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base md:text-lg font-semibold">Recent Orders</h2>
+          <Link to="/admin/orders" className="text-sm text-primary hover:underline">View All</Link>
         </div>
-
-        <div className="grid lg:grid-cols-2 gap-4 md:gap-8 mb-4 md:mb-8">
-          {/* Recent Orders */}
-          <div className="bg-card rounded-xl border border-border p-4 md:p-6">
-            <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Recent Orders</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs md:text-sm">
-                <thead>
-                  <tr className="text-muted-foreground border-b border-border">
-                    <th className="text-left py-2 md:py-3">Order ID</th>
-                    <th className="text-left py-2 md:py-3">Customer</th>
-                    <th className="text-left py-2 md:py-3">Amount</th>
-                    <th className="text-left py-2 md:py-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders.map((order) => (
-                    <tr key={order.id} className="border-b border-border last:border-0">
-                      <td className="py-2 md:py-3 font-medium">{order.id}</td>
-                      <td className="py-2 md:py-3">{order.customer}</td>
-                      <td className="py-2 md:py-3">${order.amount}</td>
-                      <td className="py-2 md:py-3">
-                        <span className={`px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Campaign Performance */}
-          <div className="bg-card rounded-xl border border-border p-4 md:p-6">
-            <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Campaign Performance</h2>
-            <div className="space-y-3 md:space-y-4">
-              {campaigns.map((campaign) => (
-                <div key={campaign.name} className="flex items-center justify-between p-3 md:p-4 bg-muted/50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-sm">{campaign.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Reach: {campaign.reach} • Clicks: {campaign.clicks}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-sm text-primary">{campaign.conversion}</p>
-                    <p className="text-xs text-muted-foreground">{campaign.spend}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Products Table */}
-        <div className="bg-card rounded-xl border border-border p-4 md:p-6">
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <h2 className="text-base md:text-lg font-semibold">Products</h2>
-            <span className="text-xs md:text-sm text-muted-foreground">{products.length} total</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs md:text-sm">
-              <thead>
-                <tr className="text-muted-foreground border-b border-border">
-                  <th className="text-left py-2 md:py-3">Product</th>
-                  <th className="text-left py-2 md:py-3 hidden md:table-cell">Category</th>
-                  <th className="text-left py-2 md:py-3">Price</th>
-                  <th className="text-left py-2 md:py-3">Rating</th>
-                  <th className="text-left py-2 md:py-3">Actions</th>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs md:text-sm">
+            <thead>
+              <tr className="text-muted-foreground border-b border-border">
+                <th className="text-left py-2 md:py-3">Order ID</th>
+                <th className="text-left py-2 md:py-3">Customer</th>
+                <th className="text-left py-2 md:py-3">Amount</th>
+                <th className="text-left py-2 md:py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentOrders.map(order => (
+                <tr key={order.id} className="border-b border-border last:border-0">
+                  <td className="py-2 md:py-3 font-medium">{order.id}</td>
+                  <td className="py-2 md:py-3">{order.customerName}</td>
+                  <td className="py-2 md:py-3">${order.totalAmount.toFixed(2)}</td>
+                  <td className="py-2 md:py-3">
+                    <span className={`px-1.5 md:px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium capitalize ${statusColors[order.status]}`}>
+                      {order.status.replace('_', ' ')}
+                    </span>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {products.slice(0, 6).map((product) => (
-                  <tr key={product.id} className="border-b border-border last:border-0">
-                    <td className="py-2 md:py-3">
-                      <div className="flex items-center gap-2 md:gap-3">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-8 h-10 md:w-10 md:h-12 object-cover rounded"
-                        />
-                        <span className="font-medium line-clamp-1">{product.name}</span>
-                      </div>
-                    </td>
-                    <td className="py-2 md:py-3 hidden md:table-cell">{product.category}</td>
-                    <td className="py-2 md:py-3">${product.price.toFixed(2)}</td>
-                    <td className="py-2 md:py-3">
-                      <span className="text-primary">★</span> {product.rating}
-                    </td>
-                    <td className="py-2 md:py-3">
-                      <button className="p-1.5 md:p-2 hover:bg-muted rounded-lg transition-colors">
-                        <Eye size={14} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 };
 

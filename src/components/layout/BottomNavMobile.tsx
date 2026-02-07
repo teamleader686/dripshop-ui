@@ -6,7 +6,7 @@ const navItems = [
   { icon: Home, label: 'Home', path: '/' },
   { icon: Grid3X3, label: 'Categories', path: '/products' },
   { icon: ShoppingCart, label: 'Cart', path: '/cart' },
-  { icon: Package, label: 'Orders', path: '/order-success' },
+  { icon: Package, label: 'Orders', path: '/orders' },
   { icon: User, label: 'Profile', path: '/login' },
 ];
 

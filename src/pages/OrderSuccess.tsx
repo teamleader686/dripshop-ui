@@ -1,11 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import AppLayout from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Package, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const OrderSuccess = () => {
-  const orderId = `ORD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const location = useLocation();
+  const orderId = location.state?.orderId || `ORD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
   return (
     <AppLayout>
@@ -31,19 +32,19 @@ const OrderSuccess = () => {
               <span className="font-semibold text-sm md:text-base">Order ID: {orderId}</span>
             </div>
             <p className="text-xs md:text-sm text-muted-foreground">
-              You will receive an email confirmation shortly with your order details and tracking information.
+              You can track your order status in the Orders section.
             </p>
           </div>
 
           <div className="space-y-3">
             <Button asChild size="lg" className="w-full btn-primary">
-              <Link to="/products">
-                Continue Shopping
+              <Link to="/orders">
+                Track My Order
                 <ArrowRight className="ml-2" size={18} />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link to="/">Back to Home</Link>
+              <Link to="/products">Continue Shopping</Link>
             </Button>
           </div>
         </motion.div>

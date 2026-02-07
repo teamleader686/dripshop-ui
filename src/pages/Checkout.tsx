@@ -2,24 +2,33 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/layout/AppLayout';
 import { useCart } from '@/context/CartContext';
+import { useOrders } from '@/context/OrderContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ArrowLeft, CreditCard, Truck, Shield } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
+  const { placeOrder } = useOrders();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [address, setAddress] = useState({
+    firstName: '', lastName: '', address: '', city: '', state: '', zip: '',
+  });
 
   const shipping = totalPrice > 50 ? 0 : 5.99;
   const total = totalPrice + shipping;
 
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
+    const fullAddress = `${address.address}, ${address.city}, ${address.state} ${address.zip}`;
+    const orderId = placeOrder(items, fullAddress, paymentMethod === 'cod' ? 'COD' : 'Card');
     clearCart();
-    navigate('/order-success');
+    toast.success('Order placed successfully!');
+    navigate('/order-success', { state: { orderId } });
   };
 
   if (items.length === 0) {
@@ -71,29 +80,29 @@ const Checkout = () => {
                   <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
                     <div className="space-y-1.5 md:space-y-2">
                       <Label htmlFor="firstName" className="text-sm">First Name</Label>
-                      <Input id="firstName" placeholder="John" required />
+                      <Input id="firstName" placeholder="John" required value={address.firstName} onChange={e => setAddress(p => ({ ...p, firstName: e.target.value }))} />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
                       <Label htmlFor="lastName" className="text-sm">Last Name</Label>
-                      <Input id="lastName" placeholder="Doe" required />
+                      <Input id="lastName" placeholder="Doe" required value={address.lastName} onChange={e => setAddress(p => ({ ...p, lastName: e.target.value }))} />
                     </div>
                   </div>
                   <div className="space-y-1.5 md:space-y-2">
                     <Label htmlFor="address" className="text-sm">Address</Label>
-                    <Input id="address" placeholder="123 Main Street" required />
+                    <Input id="address" placeholder="123 Main Street" required value={address.address} onChange={e => setAddress(p => ({ ...p, address: e.target.value }))} />
                   </div>
                   <div className="grid grid-cols-3 gap-3 md:gap-4">
                     <div className="space-y-1.5 md:space-y-2">
                       <Label htmlFor="city" className="text-sm">City</Label>
-                      <Input id="city" placeholder="New York" required />
+                      <Input id="city" placeholder="New York" required value={address.city} onChange={e => setAddress(p => ({ ...p, city: e.target.value }))} />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
                       <Label htmlFor="state" className="text-sm">State</Label>
-                      <Input id="state" placeholder="NY" required />
+                      <Input id="state" placeholder="NY" required value={address.state} onChange={e => setAddress(p => ({ ...p, state: e.target.value }))} />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
                       <Label htmlFor="zip" className="text-sm">ZIP</Label>
-                      <Input id="zip" placeholder="10001" required />
+                      <Input id="zip" placeholder="10001" required value={address.zip} onChange={e => setAddress(p => ({ ...p, zip: e.target.value }))} />
                     </div>
                   </div>
                 </div>
@@ -134,17 +143,11 @@ const Checkout = () => {
                 <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
                   {items.map((item) => (
                     <div key={item.product.id} className="flex gap-3">
-                      <img
-                        src={item.product.image}
-                        alt={item.product.name}
-                        className="w-14 h-18 md:w-16 md:h-20 object-cover rounded-lg"
-                      />
+                      <img src={item.product.image} alt={item.product.name} className="w-14 h-18 md:w-16 md:h-20 object-cover rounded-lg" />
                       <div className="flex-1">
                         <p className="text-xs md:text-sm font-medium line-clamp-1">{item.product.name}</p>
                         <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
-                        <p className="text-xs md:text-sm font-medium mt-1">
-                          ${(item.product.price * item.quantity).toFixed(2)}
-                        </p>
+                        <p className="text-xs md:text-sm font-medium mt-1">${(item.product.price * item.quantity).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
