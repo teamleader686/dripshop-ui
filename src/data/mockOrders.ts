@@ -1,0 +1,160 @@
+import { Order, AdminProduct } from '@/types/orders';
+import { products } from './products';
+
+export const mockOrders: Order[] = [
+  {
+    id: 'ORD-A1B2C3',
+    customerId: 'user-1',
+    customerName: 'John Doe',
+    customerEmail: 'john@example.com',
+    items: [
+      { product: products[0], quantity: 2, price: products[0].price },
+      { product: products[2], quantity: 1, price: products[2].price },
+    ],
+    status: 'delivered',
+    totalAmount: 179.97,
+    shippingAddress: '123 Main St, New York, NY 10001',
+    paymentMethod: 'COD',
+    placedAt: '2025-01-28T10:30:00Z',
+    shipping: {
+      courier: 'FedEx',
+      trackingId: 'FX1234567890',
+      stage: 'delivered',
+      estimatedDelivery: '2025-02-02',
+      updates: [
+        { stage: 'picked_up', date: '2025-01-29T08:00:00Z', location: 'New York Warehouse' },
+        { stage: 'in_transit', date: '2025-01-30T14:00:00Z', location: 'Philadelphia Hub' },
+        { stage: 'out_for_delivery', date: '2025-02-01T06:00:00Z', location: 'Local Office' },
+        { stage: 'delivered', date: '2025-02-01T14:30:00Z', location: 'Delivered to doorstep' },
+      ],
+    },
+    timeline: [
+      { status: 'placed', date: '2025-01-28T10:30:00Z' },
+      { status: 'processing', date: '2025-01-28T12:00:00Z' },
+      { status: 'packed', date: '2025-01-29T06:00:00Z' },
+      { status: 'shipped', date: '2025-01-29T08:00:00Z' },
+      { status: 'out_for_delivery', date: '2025-02-01T06:00:00Z' },
+      { status: 'delivered', date: '2025-02-01T14:30:00Z' },
+    ],
+  },
+  {
+    id: 'ORD-D4E5F6',
+    customerId: 'user-1',
+    customerName: 'John Doe',
+    customerEmail: 'john@example.com',
+    items: [
+      { product: products[4], quantity: 1, price: products[4].price },
+    ],
+    status: 'shipped',
+    totalAmount: 89.99,
+    shippingAddress: '123 Main St, New York, NY 10001',
+    paymentMethod: 'COD',
+    placedAt: '2025-02-01T09:15:00Z',
+    shipping: {
+      courier: 'DHL',
+      trackingId: 'DHL9876543210',
+      stage: 'in_transit',
+      estimatedDelivery: '2025-02-06',
+      updates: [
+        { stage: 'picked_up', date: '2025-02-02T10:00:00Z', location: 'LA Warehouse' },
+        { stage: 'in_transit', date: '2025-02-03T16:00:00Z', location: 'Denver Hub' },
+      ],
+    },
+    timeline: [
+      { status: 'placed', date: '2025-02-01T09:15:00Z' },
+      { status: 'processing', date: '2025-02-01T11:00:00Z' },
+      { status: 'packed', date: '2025-02-02T08:00:00Z' },
+      { status: 'shipped', date: '2025-02-02T10:00:00Z' },
+    ],
+  },
+  {
+    id: 'ORD-G7H8I9',
+    customerId: 'user-1',
+    customerName: 'John Doe',
+    customerEmail: 'john@example.com',
+    items: [
+      { product: products[5], quantity: 3, price: products[5].price },
+      { product: products[6], quantity: 1, price: products[6].price },
+    ],
+    status: 'processing',
+    totalAmount: 164.96,
+    shippingAddress: '456 Oak Ave, Chicago, IL 60601',
+    paymentMethod: 'COD',
+    placedAt: '2025-02-05T14:20:00Z',
+    timeline: [
+      { status: 'placed', date: '2025-02-05T14:20:00Z' },
+      { status: 'processing', date: '2025-02-05T16:00:00Z' },
+    ],
+  },
+  {
+    id: 'ORD-J1K2L3',
+    customerId: 'user-2',
+    customerName: 'Jane Smith',
+    customerEmail: 'jane@example.com',
+    items: [
+      { product: products[3], quantity: 1, price: products[3].price },
+    ],
+    status: 'delivered',
+    totalAmount: 189.99,
+    shippingAddress: '789 Pine Rd, Boston, MA 02101',
+    paymentMethod: 'COD',
+    placedAt: '2025-01-25T11:00:00Z',
+    shipping: {
+      courier: 'UPS',
+      trackingId: 'UPS5551234567',
+      stage: 'delivered',
+      estimatedDelivery: '2025-01-30',
+      updates: [
+        { stage: 'picked_up', date: '2025-01-26T09:00:00Z', location: 'Boston Warehouse' },
+        { stage: 'in_transit', date: '2025-01-27T12:00:00Z', location: 'Hartford Hub' },
+        { stage: 'out_for_delivery', date: '2025-01-29T07:00:00Z', location: 'Local Office' },
+        { stage: 'delivered', date: '2025-01-29T15:00:00Z', location: 'Delivered' },
+      ],
+    },
+    returnRequest: {
+      id: 'RET-001',
+      orderId: 'ORD-J1K2L3',
+      reason: 'Product does not match description',
+      status: 'approved',
+      requestedAt: '2025-01-31T10:00:00Z',
+      items: [{ product: products[3], quantity: 1, price: products[3].price }],
+      refundAmount: 189.99,
+      timeline: [
+        { status: 'requested', date: '2025-01-31T10:00:00Z' },
+        { status: 'approved', date: '2025-02-01T09:00:00Z' },
+      ],
+    },
+    timeline: [
+      { status: 'placed', date: '2025-01-25T11:00:00Z' },
+      { status: 'processing', date: '2025-01-25T13:00:00Z' },
+      { status: 'packed', date: '2025-01-26T07:00:00Z' },
+      { status: 'shipped', date: '2025-01-26T09:00:00Z' },
+      { status: 'out_for_delivery', date: '2025-01-29T07:00:00Z' },
+      { status: 'delivered', date: '2025-01-29T15:00:00Z' },
+    ],
+  },
+  {
+    id: 'ORD-M4N5O6',
+    customerId: 'user-2',
+    customerName: 'Jane Smith',
+    customerEmail: 'jane@example.com',
+    items: [
+      { product: products[1], quantity: 1, price: products[1].price },
+      { product: products[8], quantity: 2, price: products[8].price },
+    ],
+    status: 'placed',
+    totalAmount: 229.97,
+    shippingAddress: '789 Pine Rd, Boston, MA 02101',
+    paymentMethod: 'COD',
+    placedAt: '2025-02-06T08:45:00Z',
+    timeline: [
+      { status: 'placed', date: '2025-02-06T08:45:00Z' },
+    ],
+  },
+];
+
+export const mockAdminProducts: AdminProduct[] = products.map((p) => ({
+  ...p,
+  isActive: true,
+  stock: Math.floor(Math.random() * 100) + 10,
+}));

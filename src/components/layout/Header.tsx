@@ -13,8 +13,9 @@ const Header = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Shop', path: '/products' },
-    { name: 'Categories', path: '/products' },
+    { name: 'My Orders', path: '/orders' },
     { name: 'Sale', path: '/products?sale=true' },
+    { name: 'Admin', path: '/admin' },
   ];
 
   return (
