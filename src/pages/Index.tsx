@@ -12,20 +12,21 @@ const Index = () => {
     <AppLayout showMobileSearch>
       <HeroBanner />
       <PromoBar />
-      <CategoryGrid />
-      <DealsSection />
       <FeaturedProducts 
-        title="Trending Now" 
+        title="New Arrivals" 
         subtitle="Our most popular picks this season"
+        filter="new"
+      />
+      <div className="border-t border-border" />
+      <FeaturedProducts 
+        title="Top Selling" 
+        subtitle="Limited time offers you don't want to miss"
         filter="trending"
       />
-      <FeaturedProducts 
-        title="On Sale" 
-        subtitle="Limited time offers you don't want to miss"
-        filter="sale"
-      />
-      <InstagramSection />
+      <DealsSection />
+      <CategoryGrid />
       <TestimonialsSection />
+      <InstagramSection />
     </AppLayout>
   );
 };

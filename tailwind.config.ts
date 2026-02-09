@@ -9,7 +9,7 @@ export default {
   		center: true,
   		padding: '2rem',
   		screens: {
-  			'2xl': '1400px'
+  			'2xl': '1440px'
   		}
   	},
   	extend: {
@@ -77,50 +77,16 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		fontFamily: {
-  			sans: [
-  				'Work Sans',
-  				'ui-sans-serif',
-  				'system-ui',
-  				'-apple-system',
-  				'BlinkMacSystemFont',
-  				'Segoe UI',
-  				'Roboto',
-  				'Helvetica Neue',
-  				'Arial',
-  				'Noto Sans',
-  				'sans-serif'
-  			],
-  			display: [
-  				'Inter',
-  				'system-ui',
-  				'sans-serif'
-  			],
-  			serif: [
-  				'Lora',
-  				'ui-serif',
-  				'Georgia',
-  				'Cambria',
-  				'Times New Roman',
-  				'Times',
-  				'serif'
-  			],
-  			mono: [
-  				'Inconsolata',
-  				'ui-monospace',
-  				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
-  				'monospace'
-  			]
+  			sans: ['Satoshi', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+  			display: ['Satoshi', 'system-ui', 'sans-serif'],
+  			serif: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+  			mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
   		},
   		boxShadow: {
   			soft: '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
   			product: '0 4px 20px -2px rgba(0, 0, 0, 0.1)',
   			card: '0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1)',
-  			'bottom-nav': '0 -2px 10px rgba(0, 0, 0, 0.08)',
+  			'bottom-nav': '0 -2px 10px rgba(0, 0, 0, 0.06)',
   			'2xs': 'var(--shadow-2xs)',
   			xs: 'var(--shadow-xs)',
   			sm: 'var(--shadow-sm)',
@@ -131,56 +97,28 @@ export default {
   		},
   		keyframes: {
   			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
+  				from: { height: '0' },
+  				to: { height: 'var(--radix-accordion-content-height)' }
   			},
   			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
-  				},
-  				to: {
-  					height: '0'
-  				}
+  				from: { height: 'var(--radix-accordion-content-height)' },
+  				to: { height: '0' }
   			},
   			'fade-in': {
-  				from: {
-  					opacity: '0',
-  					transform: 'translateY(10px)'
-  				},
-  				to: {
-  					opacity: '1',
-  					transform: 'translateY(0)'
-  				}
+  				from: { opacity: '0', transform: 'translateY(10px)' },
+  				to: { opacity: '1', transform: 'translateY(0)' }
   			},
   			'slide-in': {
-  				from: {
-  					transform: 'translateX(-100%)'
-  				},
-  				to: {
-  					transform: 'translateX(0)'
-  				}
+  				from: { transform: 'translateX(-100%)' },
+  				to: { transform: 'translateX(0)' }
   			},
   			'scale-in': {
-  				from: {
-  					transform: 'scale(0.95)',
-  					opacity: '0'
-  				},
-  				to: {
-  					transform: 'scale(1)',
-  					opacity: '1'
-  				}
+  				from: { transform: 'scale(0.95)', opacity: '0' },
+  				to: { transform: 'scale(1)', opacity: '1' }
   			},
   			'marquee': {
-  				from: {
-  					transform: 'translateX(0)'
-  				},
-  				to: {
-  					transform: 'translateX(-50%)'
-  				}
+  				from: { transform: 'translateX(0)' },
+  				to: { transform: 'translateX(-50%)' }
   			}
   		},
   		animation: {

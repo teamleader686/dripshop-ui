@@ -15,7 +15,7 @@ const BottomNavMobile = () => {
   const { totalItems } = useCart();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-bottom-nav border-t border-border shadow-bottom-nav">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-bottom-nav">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -27,8 +27,8 @@ const BottomNavMobile = () => {
               to={item.path}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full relative transition-colors ${
                 isActive
-                  ? 'text-bottom-nav-active'
-                  : 'text-bottom-nav-foreground'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground'
               }`}
             >
               <div className="relative">
@@ -39,7 +39,7 @@ const BottomNavMobile = () => {
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] leading-tight ${isActive ? 'font-semibold' : 'font-medium'}`}>
+              <span className={`text-[10px] leading-tight ${isActive ? 'font-bold' : 'font-medium'}`}>
                 {item.label}
               </span>
             </Link>
