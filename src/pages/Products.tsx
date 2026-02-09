@@ -6,8 +6,9 @@ import { products, categories } from '@/data/products';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,17 +29,10 @@ const Products = () => {
     }
     result = result.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
     switch (sortBy) {
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'popular':
-        result.sort((a, b) => b.reviews - a.reviews);
-        break;
-      default:
-        break;
+      case 'price-low': result.sort((a, b) => a.price - b.price); break;
+      case 'price-high': result.sort((a, b) => b.price - a.price); break;
+      case 'popular': result.sort((a, b) => b.reviews - a.reviews); break;
+      default: break;
     }
     return result;
   }, [selectedCategory, isSale, priceRange, sortBy]);
@@ -62,154 +56,166 @@ const Products = () => {
   return (
     <AppLayout showMobileSearch>
       <div className="pb-0">
-        {/* Page Header - desktop only */}
-        <div className="hidden md:block bg-muted/50 py-12">
-          <div className="container-main">
-            <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-              {isSale ? 'Sale' : selectedCategory || 'All Products'}
-            </h1>
-            <p className="text-muted-foreground">
-              {filteredProducts.length} products found
-            </p>
-          </div>
+        {/* Breadcrumb */}
+        <div className="container-main py-4">
+          <nav className="text-sm text-muted-foreground">
+            <Link to="/" className="hover:text-foreground">Home</Link>
+            <span className="mx-2">{'>'}</span>
+            <span className="text-foreground">{isSale ? 'Sale' : selectedCategory || 'Shop'}</span>
+          </nav>
         </div>
 
-        <div className="container-main py-3 md:py-8">
-          {/* Mobile: filter & sort bar */}
-          <div className="md:hidden flex items-center gap-2 mb-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex-1 h-9 text-xs"
-            >
-              <Filter size={14} className="mr-1.5" />
-              Filters
-            </Button>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="flex-1 h-9 text-xs">
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="latest">Latest</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="popular">Most Popular</SelectItem>
-              </SelectContent>
-            </Select>
-            {(selectedCategory || isSale) && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9 px-2">
-                <X size={14} />
-              </Button>
-            )}
-          </div>
+        <div className="container-main pb-8">
+          <div className="flex gap-8">
+            {/* Desktop Sidebar */}
+            <div className="hidden lg:block w-[250px] flex-shrink-0">
+              <div className="border border-border rounded-[20px] p-5 sticky top-24">
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="font-bold">Filters</h3>
+                  <Filter size={18} className="text-muted-foreground" />
+                </div>
 
-          {/* Desktop filters bar */}
-          <div className="hidden md:flex flex-wrap items-center justify-between gap-4 mb-8">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={!selectedCategory ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => handleCategoryChange('')}
-                >
-                  All
-                </Button>
-                {categories.slice(0, 4).map((cat) => (
-                  <Button
-                    key={cat.id}
-                    variant={selectedCategory === cat.name ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => handleCategoryChange(cat.name)}
-                  >
-                    {cat.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              {(selectedCategory || isSale) && (
-                <Button variant="ghost" size="sm" onClick={clearFilters}>
-                  <X size={14} className="mr-1" />
-                  Clear
-                </Button>
-              )}
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[160px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="latest">Latest</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Mobile filter bottom sheet */}
-          <AnimatePresence>
-            {isFilterOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="md:hidden mb-4 overflow-hidden"
-              >
-                <div className="p-4 bg-card rounded-xl border border-border space-y-5">
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Categories</h4>
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        variant={!selectedCategory ? 'default' : 'outline'}
-                        size="sm"
-                        className="text-xs h-7"
-                        onClick={() => handleCategoryChange('')}
+                <div className="border-t border-border pt-5 mb-5">
+                  <h4 className="font-medium text-sm mb-3">Categories</h4>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => handleCategoryChange('')}
+                      className={`flex items-center justify-between w-full text-sm py-1 transition-colors ${
+                        !selectedCategory ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <span>All</span>
+                      <ChevronRight size={14} />
+                    </button>
+                    {categories.map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => handleCategoryChange(cat.name)}
+                        className={`flex items-center justify-between w-full text-sm py-1 transition-colors ${
+                          selectedCategory === cat.name ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
+                        }`}
                       >
-                        All
-                      </Button>
-                      {categories.map((cat) => (
-                        <Button
-                          key={cat.id}
-                          variant={selectedCategory === cat.name ? 'default' : 'outline'}
-                          size="sm"
-                          className="text-xs h-7"
-                          onClick={() => handleCategoryChange(cat.name)}
-                        >
-                          {cat.name}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Price: ${priceRange[0]} - ${priceRange[1]}</h4>
-                    <Slider
-                      value={priceRange}
-                      onValueChange={setPriceRange}
-                      max={200}
-                      step={10}
-                      className="mt-2"
-                    />
+                        <span>{cat.name}</span>
+                        <ChevronRight size={14} />
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
-            {filteredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
+                <div className="border-t border-border pt-5 mb-5">
+                  <h4 className="font-medium text-sm mb-4">Price</h4>
+                  <Slider
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    max={200}
+                    step={10}
+                    className="mb-2"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>${priceRange[0]}</span>
+                    <span>${priceRange[1]}</span>
+                  </div>
+                </div>
 
-          {filteredProducts.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground text-lg">No products found matching your criteria.</p>
-              <Button className="mt-4" onClick={clearFilters}>Clear Filters</Button>
+                <Button onClick={clearFilters} className="w-full btn-primary h-10 text-sm">
+                  Apply Filter
+                </Button>
+              </div>
             </div>
-          )}
+
+            {/* Main Content */}
+            <div className="flex-1">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-xl md:text-2xl font-bold">
+                  {isSale ? 'Sale' : selectedCategory || 'All Products'}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground hidden md:inline">
+                    Showing {filteredProducts.length} Products
+                  </span>
+                  {/* Mobile filter button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="lg:hidden h-9 text-xs rounded-full"
+                  >
+                    <Filter size={14} className="mr-1.5" />
+                    Filters
+                  </Button>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="w-[140px] h-9 text-xs rounded-full border-border">
+                      <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="latest">Latest</SelectItem>
+                      <SelectItem value="price-low">Price: Low-High</SelectItem>
+                      <SelectItem value="price-high">Price: High-Low</SelectItem>
+                      <SelectItem value="popular">Most Popular</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Mobile filter panel */}
+              <AnimatePresence>
+                {isFilterOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="lg:hidden mb-4 overflow-hidden"
+                  >
+                    <div className="p-4 bg-secondary rounded-[20px] space-y-5">
+                      <div>
+                        <h4 className="font-bold text-sm mb-2">Categories</h4>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            variant={!selectedCategory ? 'default' : 'outline'}
+                            size="sm"
+                            className="text-xs h-8 rounded-full"
+                            onClick={() => handleCategoryChange('')}
+                          >
+                            All
+                          </Button>
+                          {categories.map((cat) => (
+                            <Button
+                              key={cat.id}
+                              variant={selectedCategory === cat.name ? 'default' : 'outline'}
+                              size="sm"
+                              className="text-xs h-8 rounded-full"
+                              onClick={() => handleCategoryChange(cat.name)}
+                            >
+                              {cat.name}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm mb-2">Price: ${priceRange[0]} - ${priceRange[1]}</h4>
+                        <Slider value={priceRange} onValueChange={setPriceRange} max={200} step={10} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Product Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+                {filteredProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </div>
+
+              {filteredProducts.length === 0 && (
+                <div className="text-center py-16">
+                  <p className="text-muted-foreground text-lg mb-4">No products found.</p>
+                  <Button className="btn-primary" onClick={clearFilters}>Clear Filters</Button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </AppLayout>

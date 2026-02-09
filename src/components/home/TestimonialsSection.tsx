@@ -1,16 +1,24 @@
 import { testimonials } from '@/data/products';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { Star, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
 
 const TestimonialsSection = () => {
   return (
-    <section className="py-6 md:py-16 lg:py-24 bg-muted/50">
+    <section className="py-8 md:py-16 lg:py-20">
       <div className="container-main">
-        <div className="text-center mb-4 md:mb-12">
-          <h2 className="text-lg md:text-3xl lg:text-4xl font-bold mb-1 md:mb-4">What Our Customers Say</h2>
-          <p className="text-muted-foreground text-xs md:text-base max-w-md mx-auto hidden md:block">
-            Join thousands of satisfied customers who love shopping with us
-          </p>
+        <div className="flex items-end justify-between mb-6 md:mb-10">
+          <h2 className="section-heading text-left !text-2xl md:!text-4xl lg:!text-5xl">
+            Our Happy Customers
+          </h2>
+          <div className="hidden md:flex items-center gap-2">
+            <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors">
+              <ArrowLeft size={18} />
+            </button>
+            <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors">
+              <ArrowRight size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Mobile: horizontal scroll */}
@@ -18,28 +26,24 @@ const TestimonialsSection = () => {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="flex-shrink-0 w-[75vw] bg-card rounded-xl p-4 shadow-card"
+              className="flex-shrink-0 w-[85vw] border border-border rounded-[20px] p-6"
             >
-              <div className="flex gap-0.5 mb-2">
+              <div className="star-rating mb-3">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} size={12} className="fill-primary text-primary" />
+                  <Star key={i} size={16} className="star-filled" fill="currentColor" />
                 ))}
               </div>
-              <p className="text-foreground/80 text-xs mb-3 leading-relaxed">"{testimonial.text}"</p>
-              <div className="flex items-center gap-2">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                <span className="font-medium text-xs">{testimonial.name}</span>
+              <div className="flex items-center gap-1 mb-2">
+                <span className="font-bold text-sm">{testimonial.name}</span>
+                <svg className="w-5 h-5 text-success" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">"{testimonial.text}"</p>
             </div>
           ))}
         </div>
 
         {/* Desktop: grid */}
-        <div className="hidden md:grid md:grid-cols-3 gap-6">
+        <div className="hidden md:grid md:grid-cols-3 gap-5">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
@@ -47,22 +51,18 @@ const TestimonialsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.4 }}
-              className="bg-card rounded-2xl p-6 shadow-soft"
+              className="border border-border rounded-[20px] p-7"
             >
-              <div className="flex gap-1 mb-4">
+              <div className="star-rating mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} size={16} className="fill-primary text-primary" />
+                  <Star key={i} size={18} className="star-filled" fill="currentColor" />
                 ))}
               </div>
-              <p className="text-foreground/80 mb-6 leading-relaxed">"{testimonial.text}"</p>
-              <div className="flex items-center gap-3">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-                <span className="font-medium">{testimonial.name}</span>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="font-bold">{testimonial.name}</span>
+                <svg className="w-5 h-5 text-success" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
+              <p className="text-muted-foreground leading-relaxed">"{testimonial.text}"</p>
             </motion.div>
           ))}
         </div>

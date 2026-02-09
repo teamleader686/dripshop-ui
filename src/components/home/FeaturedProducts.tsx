@@ -17,37 +17,33 @@ const FeaturedProducts = ({ title, subtitle, filter, limit = 4 }: FeaturedProduc
     : products.slice(0, limit);
 
   return (
-    <section className="py-4 md:py-16 lg:py-24">
+    <section className="py-6 md:py-12 lg:py-16">
       <div className="container-main">
-        {/* Mobile: compact header with "See All" */}
-        <div className="flex items-center justify-between mb-3 md:mb-10">
-          <div>
-            <h2 className="text-base md:text-3xl lg:text-4xl font-bold mb-0 md:mb-2">{title}</h2>
-            {subtitle && <p className="text-muted-foreground text-xs md:text-base hidden md:block">{subtitle}</p>}
-          </div>
-          <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/80 text-xs md:text-sm">
-            <Link to="/products">
-              <span className="md:hidden">See All</span>
-              <span className="hidden md:inline">View All</span>
-              <ArrowRight className="ml-1" size={14} />
-            </Link>
-          </Button>
-        </div>
+        <h2 className="section-heading mb-6 md:mb-10">{title}</h2>
 
         {/* Mobile: horizontal scroll */}
         <div className="md:hidden flex overflow-x-auto gap-3 scrollbar-hide pb-2">
           {filteredProducts.map((product, index) => (
-            <div key={product.id} className="flex-shrink-0 w-[42vw]">
+            <div key={product.id} className="flex-shrink-0 w-[44vw]">
               <ProductCard product={product} index={index} />
             </div>
           ))}
         </div>
 
         {/* Desktop: grid */}
-        <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
           {filteredProducts.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}
+        </div>
+
+        {/* View All button */}
+        <div className="flex justify-center mt-6 md:mt-10">
+          <Button asChild variant="outline" className="rounded-full px-14 h-12 text-sm font-medium border-border hover:bg-secondary">
+            <Link to="/products">
+              View All
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

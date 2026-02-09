@@ -1,75 +1,65 @@
 import { Link } from 'react-router-dom';
 import { categories } from '@/data/products';
 import { motion } from 'framer-motion';
-import { Smartphone, Headphones, Tablet, Laptop, Speaker, MoreHorizontal } from 'lucide-react';
 
-const categoryIcons = [Smartphone, Headphones, Tablet, Laptop, Speaker, MoreHorizontal];
+const dressStyles = [
+  { name: 'Casual', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop', className: 'md:col-span-1' },
+  { name: 'Formal', image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=400&fit=crop', className: 'md:col-span-2' },
+  { name: 'Party', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=400&fit=crop', className: 'md:col-span-2' },
+  { name: 'Gym', image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop', className: 'md:col-span-1' },
+];
 
 const CategoryGrid = () => {
   return (
-    <section className="py-4 md:py-16 lg:py-24">
+    <section className="py-6 md:py-16 lg:py-20">
       <div className="container-main">
         {/* Mobile: horizontal scroll chips */}
         <div className="md:hidden">
           <h2 className="text-base font-bold mb-3">Categories</h2>
-          <div className="flex overflow-x-auto gap-4 scrollbar-hide pb-2">
-            {categories.map((category, index) => {
-              const Icon = categoryIcons[index] || MoreHorizontal;
-              return (
-                <Link
-                  key={category.id}
-                  to={`/products?category=${encodeURIComponent(category.name)}`}
-                  className="flex flex-col items-center gap-1.5 flex-shrink-0"
-                >
-                  <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center">
-                    <Icon size={24} className="text-accent-foreground" />
-                  </div>
-                  <span className="text-[11px] font-medium text-foreground text-center whitespace-nowrap">
-                    {category.name.split(' ')[0]}
-                  </span>
-                </Link>
-              );
-            })}
+          <div className="flex overflow-x-auto gap-3 scrollbar-hide pb-2">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                to={`/products?category=${encodeURIComponent(category.name)}`}
+                className="flex-shrink-0 px-4 py-2 bg-secondary rounded-full text-xs font-medium text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                {category.name}
+              </Link>
+            ))}
           </div>
         </div>
 
-        {/* Desktop: grid with images */}
+        {/* Desktop: SHOP.CO "Browse by Dress Style" */}
         <div className="hidden md:block">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Shop by Category</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Browse our curated collections and find exactly what you're looking for
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.4 }}
-              >
-                <Link
-                  to={`/products?category=${encodeURIComponent(category.name)}`}
-                  className="group block"
+          <div className="bg-secondary rounded-[40px] p-10 lg:p-16">
+            <h2 className="section-heading mb-10 lg:mb-14">Browse By Dress Style</h2>
+            <div className="grid grid-cols-3 gap-5">
+              {dressStyles.map((style, index) => (
+                <motion.div
+                  key={style.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
+                  className={style.className}
                 >
-                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
+                  <Link
+                    to={`/products?category=${encodeURIComponent(style.name)}`}
+                    className="group block relative h-[290px] rounded-[20px] overflow-hidden bg-card"
+                  >
                     <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      src={style.image}
+                      alt={style.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-secondary-foreground">
-                      <h3 className="font-semibold text-sm lg:text-base">{category.name}</h3>
-                      <p className="text-xs text-secondary-foreground/70">{category.productCount} items</p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                    <div className="absolute inset-0 bg-gradient-to-b from-card/30 to-transparent" />
+                    <h3 className="absolute top-6 left-8 text-2xl lg:text-[36px] font-bold text-foreground">
+                      {style.name}
+                    </h3>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
