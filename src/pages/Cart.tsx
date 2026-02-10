@@ -72,7 +72,7 @@ const Cart = () => {
                             Size: Large
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Color: {item.product.category}
+                            Color: White
                           </p>
                         </div>
                         <button
