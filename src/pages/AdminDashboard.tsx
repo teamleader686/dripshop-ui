@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminStats, useAdminOrders } from '@/hooks/useAdmin';
+import { useSalesChart } from '@/hooks/useAdminChart';
 import { DollarSign, ShoppingBag, Package, RotateCcw, TrendingUp, Truck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Button } from '@/components/ui/button';
 
 const statusColors: Record<string, string> = {
   placed: 'bg-accent text-accent-foreground', processing: 'bg-accent text-accent-foreground',
@@ -14,6 +18,8 @@ const statusColors: Record<string, string> = {
 const AdminDashboard = () => {
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: orders } = useAdminOrders();
+  const [chartPeriod, setChartPeriod] = useState<'daily' | 'monthly'>('daily');
+  const { data: chartData } = useSalesChart(chartPeriod);
 
   const statItems = [
     { title: 'Total Sales', value: `$${(stats?.totalSales || 0).toFixed(0)}`, icon: DollarSign, color: 'text-success' },
@@ -55,6 +61,32 @@ const AdminDashboard = () => {
             <item.icon size={24} className="mx-auto mb-2 text-primary" /><p className="text-sm font-medium">{item.label}</p>
           </Link>
         ))}
+      </div>
+
+      {/* Sales Chart */}
+      <div className="bg-card rounded-xl border border-border p-4 md:p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base md:text-lg font-semibold">Sales Overview</h2>
+          <div className="flex gap-1">
+            <Button size="sm" variant={chartPeriod === 'daily' ? 'default' : 'outline'} className="h-7 text-xs" onClick={() => setChartPeriod('daily')}>Daily</Button>
+            <Button size="sm" variant={chartPeriod === 'monthly' ? 'default' : 'outline'} className="h-7 text-xs" onClick={() => setChartPeriod('monthly')}>Monthly</Button>
+          </div>
+        </div>
+        <div className="h-56 md:h-72">
+          {(chartData && chartData.length > 0) ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                <Tooltip contentStyle={{ borderRadius: '0.75rem', border: '1px solid hsl(var(--border))', background: 'hsl(var(--card))' }} />
+                <Area type="monotone" dataKey="sales" stroke="hsl(var(--primary))" fill="hsl(var(--primary) / 0.1)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground text-sm">No sales data yet</div>
+          )}
+        </div>
       </div>
 
       <div className="bg-card rounded-xl border border-border p-4 md:p-6">
