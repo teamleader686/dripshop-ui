@@ -4,10 +4,12 @@ import { useAdminProducts, useToggleProductActive, useDeleteProduct, useUpdatePr
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Trash2, Search, Edit } from 'lucide-react';
+import { Trash2, Search, Edit, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getProductImage } from '@/types/database';
+import ProductFormDialog from '@/components/admin/ProductFormDialog';
+import type { DbProduct } from '@/types/database';
 
 const AdminProducts = () => {
   const { data: products, isLoading } = useAdminProducts();
@@ -17,16 +19,21 @@ const AdminProducts = () => {
   const [search, setSearch] = useState('');
   const [editingStock, setEditingStock] = useState<string | null>(null);
   const [stockValue, setStockValue] = useState('');
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<DbProduct | null>(null);
 
   const filtered = (products || []).filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <AdminLayout title="Product Management">
+      <ProductFormDialog open={formOpen} onOpenChange={(open) => { setFormOpen(open); if (!open) setEditingProduct(null); }} product={editingProduct} />
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
         <div className="relative flex-1 max-w-sm w-full">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Search products..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
+        <Button onClick={() => { setEditingProduct(null); setFormOpen(true); }}><Plus size={16} className="mr-1" /> Add Product</Button>
       </div>
 
       {isLoading ? <Skeleton className="h-64 rounded-xl" /> : (
@@ -54,7 +61,10 @@ const AdminProducts = () => {
                       <Switch checked={product.is_active} onCheckedChange={() => { toggleActive.mutate({ id: product.id, isActive: product.is_active }); toast.success(`${product.name} ${product.is_active ? 'deactivated' : 'activated'}`); }} />
                     </td>
                     <td className="py-3 px-4">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => { deleteProduct.mutate(product.id); toast.success(`${product.name} deleted`); }}><Trash2 size={14} /></Button>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEditingProduct(product); setFormOpen(true); }}><Edit size={14} /></Button>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => { deleteProduct.mutate(product.id); toast.success(`${product.name} deleted`); }}><Trash2 size={14} /></Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
